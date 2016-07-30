@@ -2,14 +2,9 @@
 
 void burnInFontTexture(sf::Font * font, unsigned int charSize) {
     
-    // generate a string with every character, to burn in the font texture
-    std::string burnInStr = "";
-    burnInStr.resize(256);
+    // get texture after requesting every possible glyph
     for (int i = 0; i < 256; i++) {
-        burnInStr[i] = (char)i;
+        font->getGlyph((char)i, charSize, false);
+        font->getTexture(charSize);
     }
-
-    // burn in the font texture - i think this should do it
-    sf::Text burnInText(burnInStr, *font, charSize);
-    font->getTexture(charSize);
 }

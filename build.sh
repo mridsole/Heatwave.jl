@@ -3,7 +3,7 @@
 libname=libchw.so
 links="-lsfml-graphics -lsfml-window -lsfml-system"
 
-compile_options="-std=c++11 -Wall -Werror $links"
+compile_options="-g -std=c++11 -Wall -Werror $links"
 
 # compile each file 
 shopt -s nullglob

@@ -15,7 +15,7 @@ public:
 
     virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const;
 
-    // the font texture to use
+    // the font texture to use - generated (not default font texture)
     sf::Texture font_texture;
     
     // only the texture coords in these should change with time
@@ -26,7 +26,7 @@ public:
     sf::Vector2u term_dims;
 
     // the dimensions of a single character, in pixels
-    sf::Vector2u ch_dims; 
+    sf::Vector2u ch_dims;
 };
 
 }

@@ -57,7 +57,7 @@ std::shared_ptr<sf::Texture> hw::FontTextureBuilder::buildFontTexture(
 
     // work with an image first - we'll move it to a texture later
     sf::Image fontImage;
-    fontImage.create(16 * charWidth, 16 * charHeight, sf::Color(0, 0, 0, 0));
+    fontImage.create(17 * charWidth, 17 * charHeight, sf::Color(0, 0, 0, 0));
 
     // now get the automatically generated font texture as an image
     sf::Image defaultFontImage = this->font->getTexture(charSize).copyToImage();
@@ -70,8 +70,13 @@ std::shared_ptr<sf::Texture> hw::FontTextureBuilder::buildFontTexture(
 
             // copy in the pixels
             int destX = i * charWidth + gly.bounds.left;
-            int destY = j * charHeight + (charHeight - gly.bounds.top);
-            fontImage.copy(defaultFontImage, destX, destY, gly.textureRect, false);
+            int destY = j * charHeight + (charHeight + gly.bounds.top);
+
+            // careful! if the src rect is (0, 0, 0, 0), then it'll actually copy
+            // the whole texture - seems like bad design on SFML's part
+            if (gly.textureRect != sf::IntRect(0, 0, 0, 0)) {
+                fontImage.copy(defaultFontImage, destX, destY, gly.textureRect, false);
+            }
         }
     }
     

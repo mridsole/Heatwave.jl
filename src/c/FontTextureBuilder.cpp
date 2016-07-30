@@ -27,8 +27,8 @@ std::shared_ptr<hw::FontCharMap> hw::FontTextureBuilder::buildFontCharMap(
     for (int i = 0; i < 16; i++) {
         for (int j = 0; j < 16; j++) {
 
-            (*fcm_ptr)[(char)(i * 16 + j)] = FontCharInfo(
-                (char)(i * 16 + j),
+            (*fcm_ptr)[(char)(j * 16 + i)] = FontCharInfo(
+                (char)(j * 16 + i),
                 sf::IntRect(charWidth * i, charHeight * j, charWidth, charHeight)
                 );
         }
@@ -57,7 +57,7 @@ std::shared_ptr<sf::Texture> hw::FontTextureBuilder::buildFontTexture(
 
     // work with an image first - we'll move it to a texture later
     sf::Image fontImage;
-    fontImage.create(17 * charWidth, 17 * charHeight, sf::Color(0, 0, 0, 0));
+    fontImage.create(16 * charWidth, 16 * charHeight, sf::Color(0, 0, 0, 0));
 
     // now get the automatically generated font texture as an image
     sf::Image defaultFontImage = this->font->getTexture(charSize).copyToImage();
@@ -66,7 +66,7 @@ std::shared_ptr<sf::Texture> hw::FontTextureBuilder::buildFontTexture(
     for (int i = 0; i < 16; i++) {
         for (int j = 0; j < 16; j++) {
 
-            sf::Glyph gly = this->font->getGlyph((char)(i*16 + j), charSize, false);
+            sf::Glyph gly = this->font->getGlyph((char)(j*16 + i), charSize, false);
 
             // copy in the pixels
             int destX = i * charWidth + gly.bounds.left;

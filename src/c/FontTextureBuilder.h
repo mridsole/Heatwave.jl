@@ -9,12 +9,12 @@ namespace hw {
 struct FontCharInfo 
 {
     // the character that this represents
-    char ch;
+    int ch;
 
     // the bounding box in the texture created by FontTextureBuilder
     sf::IntRect textureRect;
 
-    FontCharInfo(char ch, sf::IntRect textureRect):
+    FontCharInfo(int ch, sf::IntRect textureRect):
         ch(ch), textureRect(textureRect)
     {}
 
@@ -24,11 +24,12 @@ struct FontCharInfo
 struct FontInfo
 {
     // width/height in pixels
-    int charWidth;
-    int charHeight;
+    sf::Vector2u charDims;
+
+    sf::Vector2i padding;
 };
 
-using FontCharMap = std::map<char, FontCharInfo>;
+using FontCharMap = std::map<int, FontCharInfo>;
 using FontCharMap_ptr = std::shared_ptr<FontCharMap>;
 
 /*
@@ -44,9 +45,11 @@ public:
     ~FontTextureBuilder();
 
     // construct the texture, given a character size
-    FontCharMap_ptr buildFontCharMap(unsigned int charSize, int charHeight = -1);
+    FontCharMap_ptr buildFontCharMap(sf::Vector2i padding, 
+        unsigned int charSize, int charHeight = -1);
 
-    std::shared_ptr<sf::Texture>  buildFontTexture(unsigned int charSize, int charHeight = -1);
+    std::shared_ptr<sf::Texture>  buildFontTexture(sf::Vector2i padding,
+        unsigned int charSize, int charHeight = -1);
 
     // the font that's being used to build these
     std::shared_ptr<sf::Font> font;

@@ -5,7 +5,7 @@
 exname=ctest
 links="-lsfml-graphics -lsfml-window -lsfml-system"
 
-compile_options="-g -std=c++11 -Wall -Werror $links"
+compile_options="-O3 -std=c++11 -Wall -Werror $links"
 
 shopt -s nullglob
 

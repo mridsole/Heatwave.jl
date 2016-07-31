@@ -16,8 +16,9 @@ public:
     Terminal(
         std::shared_ptr<sf::Texture> fontTexture, 
         FontCharMap_ptr fontCharMap, 
-        sf::Vector2u termDims, 
-        sf::Vector2u chDims
+        sf::Vector2i termDims, 
+        sf::Vector2i chDims,
+        sf::Vector2i padding
         );
 
     ~Terminal();
@@ -25,7 +26,7 @@ public:
     void init();
 
     virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const;
-    void setChar(char ch, unsigned int i, unsigned int j);
+    void setChar(int ch, unsigned int i, unsigned int j);
     void setCharColor(sf::Color color, unsigned int i, unsigned int j);
 
     // the font texture to use - generated (not default font texture)
@@ -39,10 +40,13 @@ public:
     sf::VertexArray bgVerts;
 
     // the width * height of the terminal, in characters
-    sf::Vector2u termDims;
+    sf::Vector2i termDims;
 
     // the dimensions of a single character, in pixels
-    sf::Vector2u chDims;
+    sf::Vector2i chDims;
+
+    // the the padding to be added to each character in screen space
+    sf::Vector2i padding;
 };
 
 }

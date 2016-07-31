@@ -53,47 +53,8 @@ int main() {
         }
     }
 
-    int w = charDims.x + 2 * padding.x;
-    int h = charDims.y + 2 * padding.y;
-
-    sf::VertexArray minimalExample(sf::Quads, 8);
-    minimalExample[0].position = sf::Vector2f(500, 500);
-    minimalExample[1].position = sf::Vector2f(500, 500 + h);
-    minimalExample[2].position = sf::Vector2f(500 + w, 500 + h);
-    minimalExample[3].position = sf::Vector2f(500 + w, 500);
-
-    sf::IntRect texRect = (*fontCharMap_ptr)['$'].textureRect;
-    minimalExample[0].texCoords = sf::Vector2f(texRect.left, texRect.top);
-    minimalExample[1].texCoords = sf::Vector2f(texRect.left, texRect.top + texRect.height);
-    minimalExample[2].texCoords = sf::Vector2f(texRect.left + texRect.width, texRect.top + texRect.height);
-    minimalExample[3].texCoords = sf::Vector2f(texRect.left + texRect.width, texRect.top);
-
-    // ROUND TWO!
-    minimalExample[4].position = sf::Vector2f(520, 520);
-    minimalExample[5].position = sf::Vector2f(520, 520 + h);
-    minimalExample[6].position = sf::Vector2f(520 + w, 520 + h);
-    minimalExample[7].position = sf::Vector2f(520 + w, 520);
-
-    texRect = (*fontCharMap_ptr)['Q'].textureRect;
-    minimalExample[4].texCoords = sf::Vector2f(texRect.left, texRect.top);
-    minimalExample[5].texCoords = sf::Vector2f(texRect.left, texRect.top + texRect.height);
-    minimalExample[6].texCoords = sf::Vector2f(texRect.left + texRect.width, texRect.top + texRect.height);
-    minimalExample[7].texCoords = sf::Vector2f(texRect.left + texRect.width, texRect.top);
-
     //fontTextureSprite.setTextureRect((*fontCharMap_ptr)['a'].textureRect);
     fontTextureSprite.setPosition(sf::Vector2f(300.f, 300.f));
-
-    // SOME PRINT DEBUGGING ...
-    auto va = term.chVerts;
-    auto v1 = va[0];
-    auto v2 = va[1];
-    auto v3 = va[2];
-    auto v4 = va[3];
-
-    (void)v1;
-    (void)v2;
-    (void)v3;
-    (void)v4;
 
     while (true) {
 
@@ -102,16 +63,18 @@ int main() {
 
         for (int i = 0; i < 200; i++) {
             for (int j = 0; j < 100; j++) {
+
                 term.setChar('a', i, j);
+
+                // this works
+                term.setCharColor(sf::Color::Red, i, j);
             }
         }
 
         window.clear(sf::Color(0, 0, 0));
         
-        window.draw(fontTextureSprite);
+        //window.draw(fontTextureSprite);
         window.draw(term);
-
-        window.draw(minimalExample, fontTexture_ptr.get());
 
         window.display();
     }

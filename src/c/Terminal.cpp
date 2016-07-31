@@ -94,6 +94,17 @@ void hw::Terminal::setChar(int ch, unsigned int i, unsigned int j) {
     this->chVerts[first_idx + 3].texCoords.y = texRect.top;
 }
 
+void hw::Terminal::setAllChars(int * chs) {
+    
+    // ch must be at least as big as the terminal dimensions!
+    for (int i = 0; i < this->termDims.x; i++) {
+        for (int j = 0; j < this->termDims.y; j++) {
+            
+            this->setChar(chs[this->termDims.y * j + i], i, j);
+        }
+    }
+}
+
 void hw::Terminal::setCharColor(sf::Color color, unsigned int i, unsigned int j) {
     
     unsigned int first_idx = (j * this->termDims.x + i) * 4;
@@ -103,3 +114,44 @@ void hw::Terminal::setCharColor(sf::Color color, unsigned int i, unsigned int j)
     this->chVerts[first_idx + 2].color = color;
     this->chVerts[first_idx + 3].color = color;
 }
+
+void hw::Terminal::setAllCharColors(sf::Color * colors) {
+
+    // ch must be at least as big as the terminal dimensions!
+    for (int i = 0; i < this->termDims.x; i++) {
+        for (int j = 0; j < this->termDims.y; j++) {
+            
+            this->setCharColor(colors[this->termDims.y * j + i], i, j);
+        }
+    }
+}
+
+/*
+ *  C INTERFACE
+ *  
+ * 
+ */
+extern "C" {
+
+    void hwTerminal_setChar(hw::Terminal * term, 
+        int ch, unsigned int i, unsigned int j) {
+        
+        term->setChar(ch, i, j);
+    }
+
+    void hwTerminal_setAllChars(hw::Terminal * term, int * chs) {
+
+        term->setAllChars(chs);
+    }
+
+    void hwTerminal_setCharColor(hw::Terminal * term, 
+        sf::Color color, unsigned int i, unsigned int j) {
+
+        term->setCharColor(color, i, j);
+    }
+
+    void hwTerminal_setAllCharColors(hw::Terminal * term, sf::Color * colors) {
+
+        term->setAllCharColors(colors);
+    }
+};

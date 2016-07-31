@@ -25,9 +25,20 @@ public:
 
     void init();
 
+    // draw the terminal to a render target
     virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const;
+
+    // set an individual character
     void setChar(int ch, unsigned int i, unsigned int j);
+
+    // set all characters in batch
+    void setAllChars(int * chs);
+
+    // set an individual character color
     void setCharColor(sf::Color color, unsigned int i, unsigned int j);
+
+    // set all character colors in batch
+    void setAllCharColors(sf::Color * colors);
 
     // the font texture to use - generated (not default font texture)
     std::shared_ptr<sf::Texture> fontTexture;

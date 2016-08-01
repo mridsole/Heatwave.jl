@@ -1,8 +1,5 @@
 #include "Terminal.h"
 
-#include <iostream>
-#include "stdio.h"
-
 hw::Terminal::Terminal(
     std::shared_ptr<sf::Texture> fontTexture, 
     FontCharMap_ptr fontCharMap,
@@ -30,7 +27,11 @@ void hw::Terminal::init() {
     this->chVerts.resize(termDims.x * termDims.y * 4);
     this->bgVerts.resize(termDims.x * termDims.y * 4);
 
-    std::cout << chDims.x << chDims.y << std::endl;
+    // create the background texture - it's just one pixel ...
+    sf::Image bgTexture_image;
+    bgTexture_image.create(1, 1, sf::Color(255, 255, 255, 255));
+
+    bgTexture.loadFromImage(bgTexture_image);
 
     // set the render space positions for VA masks
     for (int i = 0; i < termDims.x; i++) {
@@ -56,6 +57,34 @@ void hw::Terminal::init() {
             // top-right corner
             this->chVerts[first_idx + 3].position.x = (i + 1) * chDims.x + padding.x;
             this->chVerts[first_idx + 3].position.y = j * chDims.y - padding.y;
+
+            // now, let's also set the background vertices - don't use padding this time
+
+            // top-left corner - actually add the vertical padding values ... 
+            this->bgVerts[first_idx].position.x = i * chDims.x;
+            this->bgVerts[first_idx].position.y = j * chDims.y + padding.y;
+
+            this->bgVerts[first_idx + 1].position.x = i * chDims.x;
+            this->bgVerts[first_idx + 1].position.y = (j + 1) * chDims.y + padding.y;
+
+            this->bgVerts[first_idx + 2].position.x = (i + 1) * chDims.x;
+            this->bgVerts[first_idx + 2].position.y = (j + 1) * chDims.y + padding.y;
+
+            this->bgVerts[first_idx + 3].position.x = (i + 1) * chDims.x;
+            this->bgVerts[first_idx + 3].position.y = j * chDims.y + padding.y;
+
+            // all quads should map to the same texture - which is just one pixel!
+            this->bgVerts[first_idx].texCoords.x = 0;
+            this->bgVerts[first_idx].texCoords.y = 0;
+            this->bgVerts[first_idx + 1].texCoords.x = 0;
+            this->bgVerts[first_idx + 1].texCoords.x = 0;
+            this->bgVerts[first_idx + 2].texCoords.x = 0;
+            this->bgVerts[first_idx + 2].texCoords.y = 0;
+            this->bgVerts[first_idx + 3].texCoords.y = 0;
+            this->bgVerts[first_idx + 3].texCoords.y = 0;
+
+            // set the color to black
+            this->setBgColor(sf::Color(0, 0, 0, 255), i, j);
         }
     }
 }
@@ -65,8 +94,10 @@ void hw::Terminal::draw(sf::RenderTarget & target, sf::RenderStates states) cons
     // dont complain about not using render states
     (void)states;
 
-    // TODO: draw the background as well
+    // draw the background
+    target.draw(this->bgVerts, &this->bgTexture);
     
+    // draw the characters
     target.draw(this->chVerts, this->fontTexture.get());
 }
 
@@ -126,10 +157,33 @@ void hw::Terminal::setAllCharColors(sf::Color * colors) {
     }
 }
 
+void hw::Terminal::setBgColor(sf::Color color, unsigned int i, unsigned int j) {
+    
+    unsigned int first_idx = (j * this->termDims.x + i) * 4;
+
+    this->bgVerts[first_idx].color = color;
+    this->bgVerts[first_idx + 1].color = color;
+    this->bgVerts[first_idx + 2].color = color;
+    this->bgVerts[first_idx + 3].color = color;
+}
+
+void hw::Terminal::setAllBgColors(sf::Color * colors) {
+    
+    // ch must be at least as big as the terminal dimensions!
+    for (int i = 0; i < this->termDims.x; i++) {
+        for (int j = 0; j < this->termDims.y; j++) {
+            
+            this->setBgColor(colors[this->termDims.y * j + i], i, j);
+        }
+    }
+}
+
 /*
  *  C INTERFACE
  *  
- * 
+ *  Some notes:
+ *   - In Julia we will have sf::Color as an immutable type
+ *   - we don't want to have to deal with 'draw' calls from julia
  */
 extern "C" {
 

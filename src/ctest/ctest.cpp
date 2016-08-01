@@ -65,9 +65,12 @@ int main() {
             for (int j = 0; j < 100; j++) {
 
                 term.setChar('a', i, j);
+                term.setChar('[', 15, 15);
 
                 // this works
                 term.setCharColor(sf::Color::Red, i, j);
+                term.setBgColor(sf::Color(i * j / 5, i * j / 10, 120, 255), i, j);
+                term.setBgColor(sf::Color::Green, 15, 15);
             }
         }
 

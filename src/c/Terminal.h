@@ -40,8 +40,17 @@ public:
     // set all character colors in batch
     void setAllCharColors(sf::Color * colors);
 
+    // set inidividual background color
+    void setBgColor(sf::Color color, unsigned int i, unsigned int j);
+
+    // set all background colors in back
+    void setAllBgColors(sf::Color * colors);
+
     // the font texture to use - generated (not default font texture)
     std::shared_ptr<sf::Texture> fontTexture;
+
+    // managed locally: generated texture for backgrounds 
+    sf::Texture bgTexture;
 
     // map from characters to their texture rects in the generated font texture
     FontCharMap_ptr fontCharMap;
@@ -59,5 +68,7 @@ public:
     // the the padding to be added to each character in screen space
     sf::Vector2i padding;
 };
+
+using Terminal_ptr = std::shared_ptr<Terminal>;
 
 }

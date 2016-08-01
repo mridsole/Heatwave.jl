@@ -39,6 +39,10 @@ std::shared_ptr<hw::FontCharMap> hw::FontTextureBuilder::buildFontCharMap(
         }
     }
 
+    // update the font information
+    this->fontInfo.padding = padding;
+    this->fontInfo.charDims = sf::Vector2i(charWidth, charHeight);
+
     return fcm_ptr;
 }
 
@@ -89,6 +93,10 @@ std::shared_ptr<sf::Texture> hw::FontTextureBuilder::buildFontTexture(
             }
         }
     }
+
+    // update the font information
+    this->fontInfo.padding = padding;
+    this->fontInfo.charDims = sf::Vector2i(charWidth, charHeight);
     
     // now make the texture
     std::shared_ptr<sf::Texture> texture_ptr(new sf::Texture());

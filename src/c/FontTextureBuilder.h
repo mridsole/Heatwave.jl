@@ -24,7 +24,7 @@ struct FontCharInfo
 struct FontInfo
 {
     // width/height in pixels
-    sf::Vector2u charDims;
+    sf::Vector2i charDims;
 
     sf::Vector2i padding;
 };
@@ -50,6 +50,10 @@ public:
 
     std::shared_ptr<sf::Texture>  buildFontTexture(sf::Vector2i padding,
         unsigned int charSize, int charHeight = -1);
+
+    // get some information about the font being generated here
+    // (only has useful stuff after the previous functions have been called)
+    FontInfo fontInfo;
 
     // the font that's being used to build these
     std::shared_ptr<sf::Font> font;

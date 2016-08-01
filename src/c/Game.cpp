@@ -43,7 +43,7 @@ void hw::Game::init(
     // make a font texture builder
     FontTextureBuilder fontTextureBuilder(termFont);
 
-    sf::Vector2i padding(0, 2);
+    sf::Vector2i padding(0, 4);
 
     // and the font char map
     // (padding heuristic used here - anything above a certain amount
@@ -102,6 +102,11 @@ extern "C" {
     void hwGame_destroy(hw::Game * game) {
 
         delete game;
+    }
+
+    void hwGame_tick(hw::Game * game) {
+        
+        game->tick();
     }
 
     hw::Terminal * hwGame_getTerminal(hw::Game * game) {

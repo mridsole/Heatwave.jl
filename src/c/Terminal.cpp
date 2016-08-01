@@ -131,7 +131,7 @@ void hw::Terminal::setAllChars(int * chs) {
     for (int i = 0; i < this->termDims.x; i++) {
         for (int j = 0; j < this->termDims.y; j++) {
             
-            this->setChar(chs[this->termDims.y * j + i], i, j);
+            this->setChar(chs[this->termDims.x * j + i], i, j);
         }
     }
 }
@@ -152,7 +152,7 @@ void hw::Terminal::setAllCharColors(sf::Color * colors) {
     for (int i = 0; i < this->termDims.x; i++) {
         for (int j = 0; j < this->termDims.y; j++) {
             
-            this->setCharColor(colors[this->termDims.y * j + i], i, j);
+            this->setCharColor(colors[this->termDims.x * j + i], i, j);
         }
     }
 }
@@ -173,7 +173,7 @@ void hw::Terminal::setAllBgColors(sf::Color * colors) {
     for (int i = 0; i < this->termDims.x; i++) {
         for (int j = 0; j < this->termDims.y; j++) {
             
-            this->setBgColor(colors[this->termDims.y * j + i], i, j);
+            this->setBgColor(colors[this->termDims.x * j + i], i, j);
         }
     }
 }
@@ -207,5 +207,17 @@ extern "C" {
     void hwTerminal_setAllCharColors(hw::Terminal * term, sf::Color * colors) {
 
         term->setAllCharColors(colors);
+    }
+
+    void hwTerminal_setBgColor(hw::Terminal * term,
+        sf::Color color, unsigned int i, unsigned int j) {
+        
+        term->setBgColor(color, i, j);
+    }
+
+    void hwTerminal_setAllBgColors(hw::Terminal * term,
+        sf::Color * colors) {
+
+        term->setAllBgColors(colors);
     }
 };

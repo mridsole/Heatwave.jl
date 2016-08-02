@@ -56,3 +56,6 @@ function TerminalView(term, i::UnitRange{Int64}, j::UnitRange{Int64})
 
     return TerminalView(sub(term.chs, i, j), sub(term.ch_colors, i, j), sub(term.bg_colors, i, j))
 end
+
+import Base.size
+Base.size(tv::TerminalView) = size(tv.chs)

@@ -32,6 +32,9 @@ end
 import Base.size
 Base.size(term::Terminal) = size(term.chs)
 
+import Base.length
+Base.length(term::Terminal) = length(term.chs)
+
 # updates the internal display mechanisms to match the buffered data
 function update(term::Terminal)
 
@@ -59,3 +62,51 @@ end
 
 import Base.size
 Base.size(tv::TerminalView) = size(tv.chs)
+
+import Base.length
+Base.length(tv::TerminalView) = length(tv.chs)
+
+function write!(term::Union{Terminal, TerminalView}, data, i::Int = 1, wrap::Bool=false)
+    
+    if wrap
+        # if we overflow then start writing at the beginning too
+        for k = 1:length(data)
+            term.chs[mod1(k + i - 1, length(term))] = data[k]
+        end
+    else
+        # if we reach the end do nothing
+        write_range = i:min(length(term), length(data) + i - 1)
+        for k in write_range term.chs[k] = data[k - i + 1] end
+    end
+end
+
+function write!(term::Union{Terminal, TerminalView}, data, i::Int = 1, 
+    j::Int = 1, wrap::Bool = false)
+    
+    write!(term, data, (j - 1) * size(term)[1] + i, wrap)
+end
+
+function write!{T}(dst::Union{Array{T, 2}, TermSubArray{T}}, data::Array{T, 1}, 
+    i::Int = 1, wrap::Bool = false)
+    
+    if wrap
+        # if we overflow then start writing at the beginning too
+        for k = 1:length(data)
+            dst[mod1(k + i - 1, length(dst))] = data[k]
+        end
+    else
+        # if we reach the end do nothing
+        write_range = i:min(length(dst), length(data) + i - 1)
+        for k in write_range
+            dst[k] = data[k - i + 1]
+        end
+
+        println(write_range)
+    end
+end
+
+function write!{T}(dst::Union{Array{T, 2}, TermSubArray{T}}, data::Array{T, 1}, 
+    i::Int = 1, j::Int = 1, wrap::Bool = false)
+    
+    write!(dst, data, (j - 1) * size(dst)[1] + i, wrap)
+end

@@ -2,9 +2,11 @@
 
 compiler="g++-5"
 libname=libchw.so
-links="-lsfml-graphics -lsfml-window -lsfml-system"
 
-compile_options="-O3 -std=c++11 -Wall -Werror $links"
+# include directory for SFML headers
+include="-I include"
+
+compile_options="-O3 -std=c++11 -Wall -Werror $include"
 
 # make folders if necessary
 mkdir -p bin

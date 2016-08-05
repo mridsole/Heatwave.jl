@@ -1,6 +1,6 @@
-Libdl.dlopen("libsfml-system", Libdl.RTLD_GLOBAL)
-Libdl.dlopen("libsfml-window", Libdl.RTLD_GLOBAL)
-Libdl.dlopen("libsfml-graphics", Libdl.RTLD_GLOBAL)
+Libdl.dlopen("lib/libsfml-system", Libdl.RTLD_GLOBAL)
+Libdl.dlopen("lib/libsfml-window", Libdl.RTLD_GLOBAL)
+Libdl.dlopen("lib/libsfml-graphics", Libdl.RTLD_GLOBAL)
 Libdl.dlopen("lib/libchw", Libdl.RTLD_GLOBAL)
 
 include("sfml.jl")

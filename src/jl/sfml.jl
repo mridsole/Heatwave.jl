@@ -43,13 +43,16 @@ immutable Color
     Color(r::UInt8, g::UInt8, b::UInt8) = new(r, g, b, 0xFF)
 
     Color(r::Float64, g::Float64, b::Float64) =
-        new(round(UInt8, r * 255), round(UInt8, g * 255), round(UInt8, b * 255), 0xFF)
+        new(round(UInt8, r * 255), round(UInt8, g * 255), 
+            round(UInt8, b * 255), 0xFF)
 
     Color(r::Float64, g::Float64, b::Float64, a::UInt8) = 
-        new(round(UInt8, r * 255), round(UInt8, g * 255), round(UInt8, b * 255), a)
+        new(round(UInt8, r * 255), round(UInt8, g * 255), 
+            round(UInt8, b * 255), a)
 
     Color(r::Float64, g::Float64, b::Float64, a::Float64) = 
-        new(round(UInt8, r * 255), round(UInt8, g * 255), round(UInt8, b * 255), round(UInt8, a * 255))
+        new(round(UInt8, r * 255), round(UInt8, g * 255), 
+            round(UInt8, b * 255), round(UInt8, a * 255))
 end
 
 import Base.+
@@ -64,7 +67,8 @@ end
 
 import Base.*
 function *(c::Color, x::Float64)
-    return Color(round(UInt8, c.r * x), round(UInt8, c.g * x), round(UInt8, c.b * x), c.a)
+    return Color(round(UInt8, c.r * x), round(UInt8, c.g * x), 
+        round(UInt8, c.b * x), c.a)
 end
 
 *(x::Float64, c::Color) = c * x

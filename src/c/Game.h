@@ -1,7 +1,8 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <string.h>
+#include <string>
+#include <vector>
 #include "Terminal.h"
 #include "FontTextureBuilder.h"
 
@@ -38,7 +39,8 @@ public:
     // tick the game - i.e. do drawing and event polling as necessary
     void tick();
 
-    void getEvents();
+
+    int pollWindowEvents(std::vector<sf::Event>& events);
 
     // the terminal font
     std::shared_ptr<sf::Font> termFont;
@@ -52,7 +54,12 @@ public:
     // the window that we're using
     std::shared_ptr<sf::RenderWindow> renderWindow;
 
+    // the terminal for now - we'll probably have more than one later
+    // (but still likely a fixed amount)
     std::shared_ptr<hw::Terminal> terminal;
+
+    // storage for the events polled each frame
+    std::vector<sf::Event> sfEvents;
 };
 
 }

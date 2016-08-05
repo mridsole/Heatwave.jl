@@ -21,7 +21,7 @@ std::shared_ptr<hw::FontCharMap> hw::FontTextureBuilder::buildFontCharMap(
     assert(charHeight > 0);
 
     // char width comes from any 'normal' glyph
-    sf::Glyph aGlyph = this->font->getGlyph('a', charSize, false);
+    sf::Glyph aGlyph = this->font->getGlyph('a', charSize, false, 0.0);
     int charWidth = round(aGlyph.advance);
 
     int rectWidth = charWidth + 2 * padding.x;
@@ -53,7 +53,7 @@ std::shared_ptr<sf::Texture> hw::FontTextureBuilder::buildFontTexture(
     burnInFontTexture(this->font.get(), charSize);
 
     // examine the glyph for the 'a' character
-    sf::Glyph aGlyph = this->font->getGlyph('a', charSize, false);
+    sf::Glyph aGlyph = this->font->getGlyph('a', charSize, false, 0.0);
 
     // from the glyph we get the width - the height comes from the font
     int charWidth = round(aGlyph.advance);
@@ -79,7 +79,7 @@ std::shared_ptr<sf::Texture> hw::FontTextureBuilder::buildFontTexture(
     for (int i = 0; i < 16; i++) {
         for (int j = 0; j < 16; j++) {
 
-            sf::Glyph gly = this->font->getGlyph((char)(j*16 + i), charSize, false);
+            sf::Glyph gly = this->font->getGlyph((char)(j*16 + i), charSize, false, 0.0);
 
             // copy in the pixels
             int destX = i * charWidth + gly.bounds.left + (2 * i + 1) * (2 * padding.x);

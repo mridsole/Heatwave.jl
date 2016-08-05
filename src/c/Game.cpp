@@ -69,19 +69,44 @@ void hw::Game::initSFML(sf::Vector2u windowDims, std::string windowTitle) {
             windowTitle
             )
         );
+
+    // have at least one event in 
 }
 
 void hw::Game::tick() {
     
-    // for now - just poll and throw away all the events
-    // we will eventually need access to these in julia, though
-    sf::Event event;
-    while (this->renderWindow->pollEvent(event)) {}
+    // poll events into a stored vector
+    this->pollWindowEvents(this->sfEvents);
 
     // clear, draw the terminal, then display
     this->renderWindow->clear();
     this->renderWindow->draw(*this->terminal);
     this->renderWindow->display();
+}
+
+// polls all the window events for a frame and puts them in a vector
+// returns the number of events polled
+int hw::Game::pollWindowEvents(std::vector<sf::Event>& events) {
+
+	unsigned int nEvent = 0;
+	events.resize(1);
+
+	while (this->renderWindow->pollEvent(events[nEvent])) {
+
+		// resize if appropriate
+		if (nEvent == events.size() - 1)
+			events.resize(events.size() + 1);
+
+		nEvent++;
+	}
+
+	if (nEvent == 0) {
+		events.resize(0);
+    } else {
+		events.resize(events.size() - 1);
+    }
+
+	return events.size();
 }
 
 // our C interface
@@ -112,5 +137,17 @@ extern "C" {
     hw::Terminal * hwGame_getTerminal(hw::Game * game) {
         
         return game->terminal.get();
+    }
+
+    // this "event" object is only valid until the next frame!
+    sf::Event * hwGame_getEvent(hw::Game * game, unsigned int i) {
+        
+        return &game->sfEvents.at(i);
+    }
+
+    // how many events were there this frame?
+    unsigned int hwGame_getNumEvents(hw::Game * game) {
+        
+        return game->sfEvents.size();
     }
 }

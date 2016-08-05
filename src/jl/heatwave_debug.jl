@@ -1,28 +1,60 @@
+include("heatwave.jl")
+
 module HeatwaveDebug
 
-using Reactive
+using Heatwave
 
-function tick_game(dt)
-    
-    println("hey: ", dt)
+print("Heatwave debugging session - enter tty name: ")
+
+# redirect standard output to a terminal of choice
+tty_name = STDIN |> readline |> chomp
+tty = open(tty_name, "w")
+redirect_stdout(tty)
+
+# flush every now and then
+@async begin
+    while true
+        sleep(0.2)
+        flush(tty)
+    end
 end
 
-# don't worry about type stability for now ..
-ticks = fps(60)
-game_signal = map(tick_game, ticks)
+config = Dict(
+    :window_dims => (1280, 720),
+    :window_title => b"Heatwave\0",
+    :term_dims => (150, 50),
+    :font_path => b"assets/FSEX300.ttf\0",
+    :char_size => 15
+)
+
+config_print(x) = print(x)
+config_print(x::Array{UInt8, 1}) = print(ASCIIString(x))
+
+println("\nDEFAULT CONFIGURATION: \n")
+for key in keys(config)
+    print(string(key) * ": \t\t")
+    config_print(config[key])
+    print("\n")
+end
+print("\n")
+
+game = Game(
+    config[:window_dims], 
+    config[:window_title], 
+    config[:term_dims], 
+    config[:font_path], 
+    config[:char_size]
+    )
+
+term = get_terminal(game)
+
+# now ...
+start(game)
+
+export game
+export term
 
 end
 
-# represents the overall game window etc
-type Game
-
-    # signals controlling the game flow
-    fps_signal::Reactive.Signal{Float64}
-    game_signal::Reactive.Signal{nothing}
-
-    ptr::Ptr{Void}
-
-    Game()
-end
-
-stop(game
+using Heatwave
+using HeatwaveDebug

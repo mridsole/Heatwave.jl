@@ -220,4 +220,10 @@ extern "C" {
 
         term->setAllBgColors(colors);
     }
+
+    // "incompatible with C" it'll be FINE BRO
+    sf::Vector2i hwTerminal_getDims(hw::Terminal * term) {
+        
+        return term->termDims;
+    }
 };

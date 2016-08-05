@@ -8,21 +8,25 @@ type Terminal
     ch_colors::Array{Color, 2}
     bg_colors::Array{Color, 2}
 
-    term_ptr::Ptr{Void}
+    ptr::Ptr{Void}
 end
 
-# some reasonable defaults
-function Terminal(x::Int, y::Int, game_ptr::Ptr{Void})
+function Terminal(ptr::Ptr{Void})
 
-    # get a pointer to the C++ terminal
-    term_ptr = ccall((:hwGame_getTerminal, "lib/libchw"), 
-        Ptr{Void}, (Ptr{Void},), game_ptr)
+    term_dims = ccall((:hwTerminal_getDims, "lib/libchw"), Vector2i, 
+        (Ptr{Void},), ptr)
+
+    x = term_dims.x
+    y = term_dims.y
 
     this = Terminal(Array{UInt32, 2}(x, y), Array{Color, 2}(x, y), 
-        Array{Color, 2}(x, y), term_ptr)
+        Array{Color, 2}(x, y), ptr)
+
+    # some reasonable defaults
     fill!(this.chs, '+')
     fill!(this.ch_colors, Color(0xFF, 0xFF, 0xFF, 0xFF))
     fill!(this.bg_colors, Color(0x00, 0x00, 0x00, 0xFF))
+
     return this
 end
 
@@ -38,14 +42,15 @@ import Base.length
 Base.length(term::Terminal) = length(term.chs)
 
 # updates the internal display mechanisms to match the buffered data
+# TODO: this isn't cheap on slower CPUs! find some other way
 function update(term::Terminal)
 
     ccall((:hwTerminal_setAllChars, "lib/libchw"), Void, 
-        (Ptr{Void}, Ptr{UInt32}), term.term_ptr, pointer(term.chs))
+        (Ptr{Void}, Ptr{UInt32}), term.ptr, pointer(term.chs))
     ccall((:hwTerminal_setAllCharColors, "lib/libchw"), Void, 
-        (Ptr{Void}, Ptr{Color}), term.term_ptr, pointer(term.ch_colors))
+        (Ptr{Void}, Ptr{Color}), term.ptr, pointer(term.ch_colors))
     ccall((:hwTerminal_setAllBgColors, "lib/libchw"), Void, 
-        (Ptr{Void}, Ptr{Color}), term.term_ptr, pointer(term.bg_colors))
+        (Ptr{Void}, Ptr{Color}), term.ptr, pointer(term.bg_colors))
 end
 
 # parameterized abbreviations for rectangular sub arrays

@@ -32,9 +32,9 @@ b_factor = 1.0
 function tick_game(x)
 
     for i in eachindex(term.bg_colors) 
-        term.bg_colors[i] = Color(round(UInt8, rand(UInt8) * r_factor), 
-            round(UInt8, rand(UInt8) * g_factor), round(UInt8, rand(UInt8) * b_factor))
-        term.chs[i] = rand(UInt8)
+        #term.bg_colors[i] = Color(round(UInt8, rand(UInt8) * r_factor), 
+        #    round(UInt8, rand(UInt8) * g_factor), round(UInt8, rand(UInt8) * b_factor))
+        #term.chs[i] = rand(UInt8)
     end
     
     # set the characters, background colors and char colors

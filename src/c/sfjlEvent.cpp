@@ -66,6 +66,12 @@ extern "C" {
         return e->sensor;
     }
 
+    sf::Event::SizeEvent sfjlEvent_getSizeEvent(
+        sf::Event * e) {
+        
+        return e->size;
+    }
+
     sf::Event::TextEvent sfjlEvent_getTextEvent(
         sf::Event * e) {
         

@@ -4,12 +4,14 @@ module HeatwaveDebug
 
 using Heatwave
 
-print("Heatwave debugging session - enter tty name: ")
+print("Heatwave debugging session - redirect stdout and stderr to: ")
 
 # redirect standard output to a terminal of choice
 tty_name = STDIN |> readline |> chomp
+
 tty = open(tty_name, "w")
 redirect_stdout(tty)
+redirect_stderr(tty)
 
 # flush every now and then
 @async begin
@@ -25,7 +27,7 @@ config = Dict(
     :term_dims => (150, 50),
     :font_path => b"assets/FSEX300.ttf\0",
     :char_size => 15
-)
+    )
 
 config_print(x) = print(x)
 config_print(x::Array{UInt8, 1}) = print(ASCIIString(x))

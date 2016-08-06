@@ -13,7 +13,6 @@ mkdir -p bin
 mkdir -p lib
 mkdir -p obj
 
-# remove ctest object file if necessary ...
 rm obj/ctest.o 2> /dev/null
 
 # compile each file 

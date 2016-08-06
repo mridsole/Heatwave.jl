@@ -12,6 +12,11 @@ Libdl.dlopen("lib/libchw", Libdl.RTLD_GLOBAL)
 
 using Reactive
 
+include("event_dispatcher.jl")
+
+export EventDispatcher
+export fire!, add_callback!, remove_callback!, getindex
+
 include("sfml.jl")
 
 export Vector2, Vector2i, Vector2u, Vector2f
@@ -31,6 +36,11 @@ export MouseWheelEvent
 export JoystickButtonEvent
 export JoystickConnectEvent
 export SizeEvent
+
+include("sfml_event_router.jl")
+
+export SFMLEventRouter
+export fire!
 
 include("terminal.jl")
 

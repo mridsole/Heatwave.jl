@@ -55,7 +55,7 @@ end
 
 # parameterized abbreviations for rectangular sub arrays
 typealias TermSubArray{T} SubArray{T, 2, Array{T, 2}, Tuple{UnitRange{Int64}, 
-    UnitRange{Int64}}, 1}
+    UnitRange{Int64}}, false}
 
 # utility type for viewing a portion of a terminal, or another view
 # the views are with respect to the parent's views
@@ -68,8 +68,8 @@ end
 
 function TerminalView(term, i::UnitRange{Int64}, j::UnitRange{Int64})
 
-    return TerminalView(sub(term.chs, i, j), sub(term.ch_colors, i, j), 
-        sub(term.bg_colors, i, j))
+    return TerminalView(view(term.chs, i, j), view(term.ch_colors, i, j), 
+        view(term.bg_colors, i, j))
 end
 
 import Base.size
@@ -78,8 +78,8 @@ Base.size(tv::TerminalView) = size(tv.chs)
 import Base.length
 Base.length(tv::TerminalView) = length(tv.chs)
 
-function write!(term::Union{Terminal, TerminalView}, data, i::Int = 1, 
-    wrap::Bool=false)
+function write!(term::Union{Terminal, TerminalView}, data, i::Int,
+    wrap::Bool = false)
     
     if wrap
         # if we overflow then start writing at the beginning too
@@ -93,14 +93,19 @@ function write!(term::Union{Terminal, TerminalView}, data, i::Int = 1,
     end
 end
 
-function write!(term::Union{Terminal, TerminalView}, data, i::Int = 1, 
-    j::Int = 1, wrap::Bool = false)
+function write!(term::Union{Terminal, TerminalView}, data, i::Int, 
+    j::Int, wrap::Bool = false)
     
     write!(term, data, (j - 1) * size(term)[1] + i, wrap)
 end
 
+function write!(term::Union{Terminal, TerminalView}, data, wrap::Bool = false)
+    
+    write!(term, data, 1, wrap)
+end
+
 function write!{T}(dst::Union{Array{T, 2}, TermSubArray{T}}, data::Array{T, 1}, 
-    i::Int = 1, wrap::Bool = false)
+    i::Int, wrap::Bool = false)
     
     if wrap
         # if we overflow then start writing at the beginning too
@@ -119,7 +124,13 @@ function write!{T}(dst::Union{Array{T, 2}, TermSubArray{T}}, data::Array{T, 1},
 end
 
 function write!{T}(dst::Union{Array{T, 2}, TermSubArray{T}}, data::Array{T, 1}, 
-    i::Int = 1, j::Int = 1, wrap::Bool = false)
+    i::Int, j::Int, wrap::Bool = false)
     
     write!(dst, data, (j - 1) * size(dst)[1] + i, wrap)
+end
+
+function write!{T}(dst::Union{Array{T, 2}, TermSubArray{T}}, data::Array{T, 1}, 
+    wrap::Bool = false)
+    
+    write!(dst, data, 1, wrap)
 end

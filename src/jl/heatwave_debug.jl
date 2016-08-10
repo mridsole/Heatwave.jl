@@ -8,7 +8,6 @@ print("Heatwave debugging session - redirect stdout and stderr to: ")
 
 # redirect standard output to a terminal of choice
 tty_name = STDIN |> readline |> chomp
-
 tty = open(tty_name, "w")
 redirect_stdout(tty)
 redirect_stderr(tty)
@@ -30,7 +29,7 @@ config = Dict(
     )
 
 config_print(x) = print(x)
-config_print(x::Array{UInt8, 1}) = print(ASCIIString(x))
+config_print(x::Array{UInt8, 1}) = print(String(x))
 
 println("\nDEFAULT CONFIGURATION: \n")
 for key in keys(config)
@@ -50,7 +49,13 @@ game = Game(
 
 term = get_terminal(game)
 
-# now ...
+# update the terminal to match the buffered data every frame
+# closure to capture the terminal reference
+let term = term
+    add_callback!(game.update_dispatcher, dt -> update(term))
+end
+
+# start ticking the game
 start(game)
 
 export game

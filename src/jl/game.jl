@@ -9,6 +9,9 @@ type Game
     # the SFML event router
     sfevent_router::SFMLEventRouter
 
+    # before rendering dispatcher
+    update_dispatcher::EventDispatcher
+
     # only have this as Game for multiple dispatch purposes
     ptr::Ptr{Game}
 
@@ -28,7 +31,8 @@ type Game
             pointer(font_dir), Cint(font_size)
             ) |> Ptr{Game}
 
-        game = new(fps_signal, game_tick_signal, SFMLEventRouter(), ptr)
+        game = new(fps_signal, game_tick_signal, SFMLEventRouter(), 
+            EventDispatcher(), ptr)
 
         # wait for the user to actually start the game
         Reactive.close(game.game_tick_signal)
@@ -53,6 +57,9 @@ function tick(game::Game, dt::Float64)
         # TODO: correct dispatch order?
         fire!(game.sfevent_router, get_event(game, i))
     end
+
+    # update the terminal
+    fire!(game.update_dispatcher, dt)
 
     tick(game.ptr)
 end

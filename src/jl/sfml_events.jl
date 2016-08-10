@@ -1,5 +1,7 @@
-#== For using SFML's events directly. The event types here are taken from
-    SFML.jl - the C and C++ versions have the same memory layouts, I think ==#
+#== 
+    For using SFML's events directly. The event types here are taken from
+    SFML.jl - the C and C++ versions have the same memory layouts, I think 
+==#
 
 immutable Event
     ptr::Ptr{Void}
@@ -7,34 +9,6 @@ end
 
 function get_type(event::Event)
     return ccall((:sfjlEvent_getType, "lib/libchw"), Cint, (Ptr{Void},), event.ptr)
-end
-
-# from SFML.jl - nice way of emulating a C enum
-baremodule EventType
-
-    const CLOSED = 0
-    const RESIZED = 1
-    const LOST_FOCUS = 2
-    const GAINED_FOCUS = 3
-    const TEXT_ENTERED = 4
-    const KEY_PRESSED = 5
-    const KEY_RELEASED = 6
-    const MOUSE_WHEEL_MOVED = 7
-    const MOUSE_WHEEL_SCROLLED = 8
-    const MOUSE_BUTTON_PRESSED = 9
-    const MOUSE_BUTTON_RELEASED =10 
-    const MOUSE_MOVED = 11
-    const MOUSE_ENTERED = 12
-    const MOUSE_LEFT = 13
-    const JOYSTICK_BUTTON_PRESSED = 14
-    const JOYSTICK_BUTTON_RELEASED = 15
-    const JOYSTICK_MOVED = 16
-    const JOYSTICK_CONNECTED = 17
-    const JOYSTICK_DISCONNECTED = 18
-    const TOUCH_BEGAN = 19
-    const TOUCH_MOVED = 20
-    const TOUCH_ENDED = 21
-    const SENSOR_CHANGED = 22
 end
 
 # type for no event data
@@ -137,6 +111,48 @@ function SizeEvent(event::Event)
     ccall((:sfjlEvent_getSizeEvent, "lib/libchw"), SizeEvent, (Ptr{Void},), event.ptr)
 end
 
+# generate expression for an enum type
+# this can't be a macro because module definitions must be at the top level
+function bare_enum(name, start, args...)
+    
+    module_body = quote end
+
+    i = Int64(start)
+    
+    for arg in args
+        push!(module_body.args, :(const $(arg) = $(i)))
+        i += 1
+    end
+
+    Expr(:module, false, name, module_body)
+end
+
+bare_enum(:EventType, 0,
+    :CLOSED,
+    :RESIZED,
+    :LOST_FOCUS,
+    :GAINED_FOCUS,
+    :TEXT_ENTERED,
+    :KEY_PRESSED,
+    :KEY_RELEASED,
+    :MOUSE_WHEEL_MOVED,
+    :MOUSE_WHEEL_SCROLLED,
+    :MOUSE_BUTTON_PRESSED,
+    :MOUSE_BUTTON_RELEASED,
+    :MOUSE_MOVED,
+    :MOUSE_ENTERED,
+    :MOUSE_LEFT,
+    :JOYSTICK_BUTTON_PRESSED,
+    :JOYSTICK_BUTTON_RELEASED,
+    :JOYSTICK_MOVED,
+    :JOYSTICK_CONNECTED,
+    :JOYSTICK_DISCONNECTED,
+    :TOUCH_BEGAN,
+    :TOUCH_MOVED,
+    :TOUCH_ENDED,
+    :SENSOR_CHANGED
+) |> eval
+
 # for convenience - map event types to the corresponding event data
 event_data_map = Dict{Int64, Any}(
     EventType.CLOSED => NoDataEvent,
@@ -163,3 +179,28 @@ event_data_map = Dict{Int64, Any}(
     #EventType.TOUCH_ENDED => TouchEvent,
     #EventType.SENSOR_CHANGED => SensorEvent
 )
+
+# enum for key codes (in KeyEvent)
+bare_enum(:KeyCodes, -1,
+    :Unknown,
+    :A, :B, :C, :D, :E, :F, :G, :H, :I, :J,
+    :K, :L, :M, :N, :O, :P, :Q, :R, :S, :T,
+    :U, :V, :W, :X, :Y, :Z,
+    :Num0, :Num1, :Num2, :Num3, :Num4,
+    :Num5, :Num6, :Num7, :Num8, :Num9,
+    :Escape, :LControl, :LShift,
+    :LAlt, :LSystem, :RControl, :RShift,
+    :RAlt, :RSystem, :Menu, :LBracket,
+    :RBracket, :SemiColon, :Comma,
+    :Period, :Quote, :Slash, :BackSlash,
+    :Tilde, :Equal, :Dash, :Space, :Return,
+    :BackSpace, :Tab, :PageUp, :PageDown,
+    :End, :Home, :Insert, :Divide,
+    :Left, :Right, :Up, :Down,
+    :Numpad0, :Numpad1, :Numpad2, :Numpad3,
+    :Numpad4, :Numpad5, :Numpad6, :Numpad7,
+    :Numpad8, :Numpad9, :F1, :F2,
+    :F3, :F4, :F5, :F6, :F7, :F8, :F9,
+    :F10, :F11, :F12, :F13, :F14, :F15,
+    :Pause, :KeyCount
+) |> eval

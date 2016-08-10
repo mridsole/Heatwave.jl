@@ -7,6 +7,7 @@
 # some metaprogramming stuff for better runtime performance
 # ("compiles" down to just an if statement)
 
+# not really being used
 const ed_symbols = (() -> begin 
 
     et_enum_names = filter(name -> name != :EventType, names(EventType, true))
@@ -83,5 +84,3 @@ function fire!(router::SFMLEventRouter, event::Event)
     # this is probably fine
     fire!(router.dispatchers[etype], typed_event)
 end
-
-

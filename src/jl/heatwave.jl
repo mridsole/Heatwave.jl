@@ -12,6 +12,11 @@ Libdl.dlopen("lib/libchw", Libdl.RTLD_GLOBAL)
 
 using Reactive
 
+include("buffer_cursor.jl")
+
+export BufferCursor
+export write!, advance!
+
 include("event_dispatcher.jl")
 
 export EventDispatcher
@@ -27,7 +32,7 @@ export +, -, *
 
 include("sfml_events.jl")
 
-export Event, EventType
+export Event, EventType, KeyCodes
 export KeyEvent
 export TextEvent
 export MouseMoveEvent
@@ -42,6 +47,11 @@ include("sfml_event_router.jl")
 export SFMLEventRouter
 export fire!
 
+include("text_entry_buffer.jl")
+
+export TextEntryBuffer
+export bind!, on_text_entered
+
 include("terminal.jl")
 
 export Terminal
@@ -49,7 +59,7 @@ export show, size, length, update
 export TermSubArray
 
 export TerminalView
-export show, size, length, write
+export show, size, length, write!
 
 include("game.jl")
 

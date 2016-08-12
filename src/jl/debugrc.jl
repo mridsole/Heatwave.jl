@@ -8,7 +8,7 @@ fill!(buf, 0x00000000)
 teb = TextEntryBuffer(
     game.sfevent_router.dispatchers[EventType.TEXT_ENTERED], 
     buf
-    )
+)
 
 on_change_sig = Reactive.Signal(nothing)
 cid = add_callback!(teb.on_change_dispatcher, let 
@@ -16,10 +16,14 @@ cid = add_callback!(teb.on_change_dispatcher, let
     _ -> push!(on_change_sig, nothing)
 end)
 
-# TODO: only print if it's been changed ...
-sig = @>> begin 
+print_sig = @>> begin 
+
     game.tick_signal
-    map(_ -> buf)
+
+    map(let buf = buf
+        _ -> buf
+    end)
+
     sampleon(on_change_sig)
     map(buf -> reinterpret(Char, buf))
     map(bch -> convert(String, bch))

@@ -4,7 +4,7 @@ type Game
 
     # signals controlling the game flow
     fps_signal::Reactive.Signal{Float64}
-    game_tick_signal::Reactive.Signal{Void}
+    tick_signal::Reactive.Signal{Void}
 
     # the SFML event router
     sfevent_router::SFMLEventRouter
@@ -21,7 +21,7 @@ type Game
         fps_signal = Reactive.fps(fps)
 
         # we'll configure this properly after we get the game object
-        game_tick_signal = map(dt -> nothing, fps_signal)
+        tick_signal = map(dt -> nothing, fps_signal)
 
         ptr = ccall(
             (:hwGame_create, "lib/libchw"), Ptr{Void},
@@ -31,11 +31,11 @@ type Game
             pointer(font_dir), Cint(font_size)
             ) |> Ptr{Game}
 
-        game = new(fps_signal, game_tick_signal, SFMLEventRouter(), 
+        game = new(fps_signal, tick_signal, SFMLEventRouter(), 
             EventDispatcher(), ptr)
 
         # wait for the user to actually start the game
-        Reactive.close(game.game_tick_signal)
+        Reactive.close(game.tick_signal)
 
         return game
      end
@@ -65,9 +65,10 @@ function tick(game::Game, dt::Float64)
 end
 
 function stop(game::Game)
-    Reactive.close(game.game_tick_signal)
+    Reactive.close(game.tick_signal)
 end
 
+import Base.close
 function close(game::Game)
 
     # stop ticking the game asynchronously
@@ -78,7 +79,7 @@ end
 
 import Base.start
 function start(game::Game)
-    game.game_tick_signal = map(dt -> tick(game, dt), game.fps_signal)
+    game.tick_signal = map(dt -> tick(game, dt), game.fps_signal)
 end
 
 # the number of events for this frame

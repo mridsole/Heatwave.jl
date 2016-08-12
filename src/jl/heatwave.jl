@@ -15,7 +15,7 @@ using Reactive
 include("buffer_cursor.jl")
 
 export BufferCursor
-export write!, advance!
+export write!, advance!, backspace!, at, at!
 
 include("event_dispatcher.jl")
 
@@ -50,7 +50,7 @@ export fire!
 include("text_entry_buffer.jl")
 
 export TextEntryBuffer
-export bind!, on_text_entered
+export bind!, unbind!, listening, listening!
 
 include("terminal.jl")
 
@@ -64,6 +64,7 @@ export show, size, length, write!
 include("game.jl")
 
 export Game
-export tick, stop, start, get_term_dims, get_terminal
+export tick, stop, start, close, get_term_dims, 
+    get_terminal
 
 end

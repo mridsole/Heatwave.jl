@@ -6,6 +6,8 @@
 
     Further note: this is not intended to be used directly with input -
     this is just a tool for moving around the 2D terminal. 
+
+    (Can also be used for one dimensional buffers.)
 ==#
 
 type BufferCursor{BufferT}
@@ -25,7 +27,7 @@ function advance!{T}(cursor::BufferCursor{T}, i::Int64, wrap::Bool = false)
     if wrap
         cursor.pos = mod1(cursor.pos + i, length(cursor.buf))
     else
-        cursor.pos = max(min(length(cursor.buf), cursor.pos + i), 1)
+        cursor.pos = max(min(length(cursor.buf) + 1, cursor.pos + i), 1)
     end
 end
 
@@ -42,19 +44,51 @@ function advance_line!{T}(cursor::BufferCursor{T}, i::Int64, wrap::Bool = false)
     end
 end
 
+function backspace!{T}(cursor::BufferCursor{T})
+    
+    # delete the previous character and shift everything in front back one space
+    # by 'delete', I mean replace with the null character. 
+
+    # if we're at the start, do nothing
+    if cursor.pos == 1 return end
+
+    # move back one position
+    cursor.pos -= 1
+
+    # bring every character backwards by one
+    for i = cursor.pos : (length(cursor.buf) - 1)
+        cursor.buf[i] = cursor.buf[i + 1]
+    end
+
+    # zero out last character
+    cursor.buf[end] = UInt32(0)
+end
+
 # write and advance
 function write!{T}(cursor::BufferCursor{T}, ch, wrap::Bool = false)
 
-    # some certain special cases
-    if ch == UInt32('\b')
-        advance!(cursor, -1, wrap)
-        cursor.buf[cursor.pos] = UInt32(' ')
+    # just write the data in and advance
+    at!(cursor, ch)
+    advance!(cursor, 1, wrap)
+end
 
-    elseif ch == UInt32('\r')
-        advance_line!(cursor, 1, wrap)
+# write a string (just call advance a few times)
+function write!{T}(cursor::BufferCursor{T}, chs::Array, wrap::Bool = false)
     
-    else
-        cursor.buf[cursor.pos] = UInt32(ch)
-        advance!(cursor, 1, wrap)
+    for ch in chs
+        write!(cursor, ch, wrap)
+    end
+end
+
+# get the character under the cursor
+function at{T}(cursor::BufferCursor{T}, offset::Int = 0)
+    return (cursor.pos + offset) in 1:length(cursor.buf) ? 
+        cursor.buf[cursor.pos + offset] : UInt32(0)
+end
+
+# set with bounds checking
+function at!{T}(cursor::BufferCursor{T}, ch)
+    if cursor.pos in 1:length(cursor.buf)
+        cursor.buf[cursor.pos] = ch
     end
 end

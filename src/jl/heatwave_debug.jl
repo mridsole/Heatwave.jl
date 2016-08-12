@@ -65,3 +65,5 @@ end
 
 using Heatwave
 using HeatwaveDebug
+
+include("debugrc.jl")

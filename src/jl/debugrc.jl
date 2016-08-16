@@ -30,3 +30,21 @@ print_sig = @>> begin
     map(bch -> convert(String, bch))
     map(println)
 end
+
+# now test some state transistion
+grid_dims = (30, 30)
+cg = CarrierGrid(grid_dims...)
+fill!(cg, Nullable{Carrier}())
+cl = CarrierList()
+carrier = Carrier(cg, cl, 5, 5, 1, 1)
+srg = StateRenderGrid(grid_dims...)
+@> srg.generators push!(cg)
+tv = TerminalView(term, 1:grid_dims[1], 1:grid_dims[2])
+
+function tick()
+    
+    foreach(tick!, cl)
+    foreach(flush!, cl)
+    generate!(srg)
+    write!(tv, srg.chs)
+end

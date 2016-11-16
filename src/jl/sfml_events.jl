@@ -111,22 +111,6 @@ function SizeEvent(event::Event)
     ccall((:sfjlEvent_getSizeEvent, "lib/libchw"), SizeEvent, (Ptr{Void},), event.ptr)
 end
 
-# generate expression for an enum type
-# this can't be a macro because module definitions must be at the top level
-function bare_enum(name, start, args...)
-    
-    module_body = quote end
-
-    i = Int64(start)
-    
-    for arg in args
-        push!(module_body.args, :(const $(arg) = $(i)))
-        i += 1
-    end
-
-    Expr(:module, false, name, module_body)
-end
-
 bare_enum(:EventType, 0,
     :CLOSED,
     :RESIZED,

@@ -13,6 +13,8 @@ Libdl.dlopen("lib/libchw", Libdl.RTLD_GLOBAL)
 using Reactive
 using Lazy
 
+include("utils.jl")
+
 include("state_object.jl")
 export StateObject
 export pos, pos!, char

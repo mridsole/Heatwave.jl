@@ -35,16 +35,35 @@ end
 grid_dims = (30, 30)
 cg = CarrierGrid(grid_dims...)
 fill!(cg, Nullable{Carrier}())
+cmm = CarrierMoveMap(grid_dims...)
+fill!(cmm, 0)
 cl = CarrierList()
-carrier = Carrier(cg, cl, 5, 5, 1, 1)
+carrier = Carrier(cg, cl, cmm, 5, 5, 1, 1, CarrierStatePhase.CHOOSE)
 srg = StateRenderGrid(grid_dims...)
 @> srg.generators push!(cg)
 tv = TerminalView(term, 1:grid_dims[1], 1:grid_dims[2])
 
+function try_make_carrier()
+    xn, yn = (rand(1:20), rand(1:20))
+    if cg[xn, yn].isnull
+        Carrier(cg, cl, cmm, xn, yn, rand(0:4), 1, CarrierStatePhase.CHOOSE)
+    end
+    return cg[xn, yn]
+end
+
+for i = 1:2000 try_make_carrier() end
+
 function tick()
     
+    # We only want to reset the move map at the start of the choose phase
+    # this is really a hack for now
+    if cl[1].state.phase == CarrierStatePhase.CHOOSE
+        fill!(cmm, 0)
+    end
     foreach(tick!, cl)
     foreach(flush!, cl)
     generate!(srg)
     write!(tv, srg.chs)
 end
+
+map(dt->begin tick(); println(dt) end, fps(10))
